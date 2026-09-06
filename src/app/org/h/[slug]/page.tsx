@@ -13,7 +13,12 @@ import { EmptyState } from "@/components/empty-state";
 import { RubricEditor } from "@/components/rubric-editor";
 import { hackathonStatus } from "@/domain";
 import { btnClass, btnPrimaryClass, fieldClass, statusLabel } from "@/lib/ui";
-import { addJudgeAction, updateProjectAction } from "@/server/actions";
+import { toDateTimeLocal } from "@/lib/utils";
+import {
+  addJudgeAction,
+  updateHackathonAction,
+  updateProjectAction,
+} from "@/server/actions";
 import {
   getHackathonBySlug,
   listCriteria,
@@ -72,6 +77,46 @@ export default async function OrganizerHackathonPage({
           </Link>
         </div>
       </header>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg">Hackathon</h2>
+        <ActionForm
+          action={updateHackathonAction}
+          className="flex flex-col gap-3"
+        >
+          <input type="hidden" name="slug" value={slug} />
+          <Field
+            required
+            name="name"
+            label="Nombre"
+            defaultValue={hackathon.name}
+          />
+          <Field
+            required
+            name="coverImageUrl"
+            type="url"
+            label="Imagen (URL)"
+            defaultValue={hackathon.coverImageUrl}
+          />
+          <Field
+            required
+            name="startsAt"
+            type="datetime-local"
+            label="Inicio"
+            hint="Hora local de tu computadora. El slug público no cambia."
+            defaultValue={toDateTimeLocal(hackathon.startsAt)}
+          />
+          <Field
+            required
+            name="endsAt"
+            type="datetime-local"
+            label="Fin"
+            defaultValue={toDateTimeLocal(hackathon.endsAt)}
+          />
+          <FormMessage />
+          <SubmitButton>Guardar hackathon</SubmitButton>
+        </ActionForm>
+      </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-lg">Rúbrica</h2>

@@ -12,6 +12,7 @@ import {
   saveJudging,
   saveRubric,
   submitProject,
+  updateHackathon,
   updateProject,
 } from "./repo";
 
@@ -36,6 +37,27 @@ export async function createHackathonAction(
       endsAt: parseDateTimeLocal(String(formData.get("endsAt") ?? "")),
     });
     redirect(`/org/h/${hackathon.slug}`);
+  });
+}
+
+export async function updateHackathonAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return runAction(async () => {
+    const userId = await requireUserId();
+    const slug = String(formData.get("slug") ?? "");
+    await updateHackathon({
+      organizerUserId: userId,
+      slug,
+      name: String(formData.get("name") ?? ""),
+      coverImageUrl: String(formData.get("coverImageUrl") ?? ""),
+      startsAt: parseDateTimeLocal(String(formData.get("startsAt") ?? "")),
+      endsAt: parseDateTimeLocal(String(formData.get("endsAt") ?? "")),
+    });
+    revalidatePath(`/org/h/${slug}`);
+    revalidatePath(`/h/${slug}`);
+    return undefined;
   });
 }
 

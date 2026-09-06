@@ -85,6 +85,38 @@ export async function createHackathon(input: {
   return row;
 }
 
+export async function updateHackathon(input: {
+  organizerUserId: string;
+  slug: string;
+  name: string;
+  coverImageUrl: string;
+  startsAt: Date;
+  endsAt: Date;
+}) {
+  await ready();
+  const hackathon = await requireOwnedHackathon(
+    input.organizerUserId,
+    input.slug,
+  );
+  if (input.endsAt < input.startsAt) {
+    throw new Error("End must be after start");
+  }
+  if (!input.coverImageUrl.trim()) {
+    throw new Error("Cover image URL is required");
+  }
+  toSlug(input.name);
+
+  await db
+    .update(hackathons)
+    .set({
+      name: input.name.trim(),
+      coverImageUrl: input.coverImageUrl.trim(),
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+    })
+    .where(eq(hackathons.id, hackathon.id));
+}
+
 export async function listProjects(hackathonId: string) {
   await ready();
   const rows = await db
