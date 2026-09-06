@@ -28,3 +28,10 @@ select {
   background: #111;
   color: var(--foreground);
 }
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}

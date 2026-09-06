@@ -1,12 +1,70 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import {
+  ActionForm,
+  FormMessage,
+  SubmitButton,
+} from "@/components/action-form";
+import { EmptyState } from "@/components/empty-state";
+import { btnPrimaryClass, fieldClass } from "@/lib/ui";
 import { saveJudgingAction } from "@/server/actions";
 import {
+  getHackathonBySlug,
   getJudgeByCode,
   getJudgeRatings,
   listCriteria,
   listProjects,
 } from "@/server/repo";
+
+function JudgeGate({
+  slug,
+  name,
+  error,
+  defaultCode,
+}: {
+  slug: string;
+  name: string;
+  error?: string;
+  defaultCode?: string;
+}) {
+  return (
+    <main className="mx-auto flex max-w-xl flex-col gap-6 px-6 py-12">
+      <div className="flex flex-col gap-2">
+        <Link
+          href={`/h/${slug}`}
+          className="text-sm text-muted hover:underline"
+        >
+          ← {name}
+        </Link>
+        <h1 className="text-balance text-2xl">Juzgar</h1>
+        <p className="text-pretty text-sm text-muted">
+          Pega el Access Code que te envió el organizador.
+        </p>
+      </div>
+      <form className="flex flex-col gap-3">
+        <label className="flex flex-col gap-1 text-sm">
+          Access Code
+          <input
+            name="code"
+            placeholder="Access Code"
+            defaultValue={defaultCode}
+            className={fieldClass}
+            autoComplete="off"
+          />
+        </label>
+        {error ? (
+          <p role="alert" className="text-sm text-red-400">
+            {error}
+          </p>
+        ) : null}
+        <button type="submit" className={btnPrimaryClass}>
+          Entrar
+        </button>
+      </form>
+    </main>
+  );
+}
 
 export default async function JudgePage({
   params,
@@ -17,30 +75,24 @@ export default async function JudgePage({
 }) {
   const { slug } = await params;
   const { code } = await searchParams;
+  const hackathon = await getHackathonBySlug(slug);
+  if (!hackathon) notFound();
 
   if (!code) {
-    return (
-      <main className="mx-auto flex min-h-dvh max-w-xl flex-col gap-6 px-6 py-12">
-        <h1 className="text-balance text-2xl">Juzgar</h1>
-        <form className="flex gap-2">
-          <input
-            name="code"
-            placeholder="Access Code"
-            className="flex-1 border border-line px-3 py-2"
-          />
-          <button
-            type="submit"
-            className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
-          >
-            Entrar
-          </button>
-        </form>
-      </main>
-    );
+    return <JudgeGate slug={slug} name={hackathon.name} />;
   }
 
   const session = await getJudgeByCode(slug, code);
-  if (!session) notFound();
+  if (!session) {
+    return (
+      <JudgeGate
+        slug={slug}
+        name={hackathon.name}
+        defaultCode={code}
+        error="Access Code inválido."
+      />
+    );
+  }
 
   const [projectRows, rubric] = await Promise.all([
     listProjects(session.hackathon.id),
@@ -55,17 +107,27 @@ export default async function JudgePage({
   );
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-8 px-6 py-12">
-      <h1 className="text-balance text-2xl">
-        Hola {session.judge.name}. Juzga {session.hackathon.name}
-      </h1>
+    <main className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-12">
+      <div className="flex flex-col gap-2">
+        <Link
+          href={`/h/${slug}`}
+          className="text-sm text-muted hover:underline"
+        >
+          ← {session.hackathon.name}
+        </Link>
+        <h1 className="text-balance text-2xl">
+          Hola {session.judge.name}. Juzga {session.hackathon.name}
+        </h1>
+      </div>
       {rubric.length === 0 ? (
-        <p className="text-muted">
+        <p className="text-pretty text-muted">
           El organizador todavía no definió la rúbrica.
         </p>
+      ) : projectViews.length === 0 ? (
+        <EmptyState title="Todavía no hay proyectos que juzgar." />
       ) : (
         projectViews.map(({ project, existing }) => (
-          <form
+          <ActionForm
             key={project.id}
             action={saveJudgingAction}
             className="flex flex-col gap-3 border border-line p-4"
@@ -116,15 +178,11 @@ export default async function JudgePage({
               name="comment"
               placeholder="Comentario (opcional)"
               defaultValue={existing.comment}
-              className="border border-line px-3 py-2 text-sm"
+              className={`${fieldClass} min-h-20`}
             />
-            <button
-              type="submit"
-              className="w-fit border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
-            >
-              Guardar score
-            </button>
-          </form>
+            <FormMessage />
+            <SubmitButton>Guardar score</SubmitButton>
+          </ActionForm>
         ))
       )}
     </main>

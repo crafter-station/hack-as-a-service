@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Cover } from "@/components/cover";
+import { EmptyState } from "@/components/empty-state";
 import { canSubmit, hackathonStatus } from "@/domain";
+import { btnClass, btnPrimaryClass, statusLabel } from "@/lib/ui";
 import { getHackathonBySlug, listProjects } from "@/server/repo";
 
 export default async function PublicHackathonPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ submitted?: string }>;
 }) {
   const { slug } = await params;
+  const { submitted } = await searchParams;
   const hackathon = await getHackathonBySlug(slug);
   if (!hackathon) notFound();
 
@@ -18,13 +24,11 @@ export default async function PublicHackathonPage({
   const open = canSubmit(hackathon, new Date());
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-6 py-12">
-      <img
-        src={hackathon.coverImageUrl}
-        alt=""
-        className="aspect-video w-full object-cover"
-      />
-      <p className="font-mono text-xs uppercase text-muted">{status}</p>
+    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+      <Cover src={hackathon.coverImageUrl} alt="" />
+      <p className="font-mono text-xs uppercase text-muted">
+        {statusLabel[status]}
+      </p>
       <h1 className="text-balance text-3xl">{hackathon.name}</h1>
       <p className="text-sm text-muted tabular-nums">
         {hackathon.startsAt.toLocaleString("es-PE", {
@@ -37,33 +41,47 @@ export default async function PublicHackathonPage({
           timeStyle: "short",
         })}
       </p>
-      {open ? (
-        <Link
-          href={`/h/${slug}/submit`}
-          className="w-fit border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+      {submitted ? (
+        <p
+          role="status"
+          className="border border-line px-4 py-3 text-sm text-pretty"
         >
-          Subir proyecto
+          Proyecto enviado. Ya está en la lista.
+        </p>
+      ) : null}
+      <div className="flex flex-wrap gap-3">
+        {open ? (
+          <Link href={`/h/${slug}/submit`} className={btnPrimaryClass}>
+            Subir proyecto
+          </Link>
+        ) : (
+          <p className="text-muted">Las submissions están cerradas.</p>
+        )}
+        <Link href={`/h/${slug}/judge`} className={btnClass}>
+          Soy juez
         </Link>
+      </div>
+      {projectRows.length === 0 ? (
+        <EmptyState
+          title="Todavía no hay proyectos."
+          actionHref={open ? `/h/${slug}/submit` : undefined}
+          actionLabel={open ? "Subir el primero" : undefined}
+        />
       ) : (
-        <p className="text-muted">Las submissions están cerradas.</p>
+        <ul className="grid gap-4">
+          {projectRows.map((project) => (
+            <li key={project.id} className="border border-line p-4">
+              <Cover src={project.imageUrl} alt="" className="mb-3" />
+              <a href={project.linkUrl} className="text-lg underline">
+                {project.name}
+              </a>
+              <p className="text-sm text-muted">
+                {project.participantEmails.join(", ")}
+              </p>
+            </li>
+          ))}
+        </ul>
       )}
-      <ul className="grid gap-4">
-        {projectRows.map((project) => (
-          <li key={project.id} className="border border-line p-4">
-            <img
-              src={project.imageUrl}
-              alt=""
-              className="mb-3 aspect-video w-full object-cover"
-            />
-            <a href={project.linkUrl} className="text-lg underline">
-              {project.name}
-            </a>
-            <p className="text-sm text-muted">
-              {project.participantEmails.join(", ")}
-            </p>
-          </li>
-        ))}
-      </ul>
     </main>
   );
 }

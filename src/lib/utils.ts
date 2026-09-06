@@ -1,5 +1,8 @@
-export function cn(...inputs: Array<string | false | null | undefined>) {
-  return inputs.filter(Boolean).join(" ");
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
 export function id() {
@@ -18,4 +21,9 @@ export function parseDateTimeLocal(value: string) {
     throw new Error("Invalid date");
   }
   return date;
+}
+
+export function toDateTimeLocal(date: Date) {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }

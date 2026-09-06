@@ -10,6 +10,11 @@ export type CriterionInput = {
   weightPercent: number;
 };
 
+export const DEFAULT_RUBRIC: readonly CriterionInput[] = [
+  { name: "Craft", weightPercent: 50 },
+  { name: "Impact", weightPercent: 50 },
+];
+
 export type RatedCriterion = {
   name: string;
   weightPercent: number;
@@ -44,7 +49,7 @@ export function hackathonStatus(
 }
 
 export function canSubmit(window: HackathonWindow, now: Date): boolean {
-  return hackathonStatus(window, now) === "open";
+  return now <= window.endsAt;
 }
 
 export function assertRubric(criteria: readonly CriterionInput[]): void {

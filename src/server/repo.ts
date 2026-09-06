@@ -1,8 +1,9 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import {
   assertRubric,
   canSubmit,
+  DEFAULT_RUBRIC,
   parseParticipantEmails,
   rankProjects,
   scoreProject,
@@ -18,8 +19,6 @@ import {
   projects,
   ratings,
 } from "./schema";
-
-export type ActionError = { error: string };
 
 async function ready() {
   await ensureSchema();
@@ -74,7 +73,48 @@ export async function createHackathon(input: {
     createdAt: new Date(),
   };
   await db.insert(hackathons).values(row);
+  await db.insert(criteria).values(
+    DEFAULT_RUBRIC.map((item, index) => ({
+      id: id(),
+      hackathonId: row.id,
+      name: item.name,
+      weightPercent: item.weightPercent,
+      sortOrder: index,
+    })),
+  );
   return row;
+}
+
+export async function updateHackathon(input: {
+  organizerUserId: string;
+  slug: string;
+  name: string;
+  coverImageUrl: string;
+  startsAt: Date;
+  endsAt: Date;
+}) {
+  await ready();
+  const hackathon = await requireOwnedHackathon(
+    input.organizerUserId,
+    input.slug,
+  );
+  if (input.endsAt < input.startsAt) {
+    throw new Error("End must be after start");
+  }
+  if (!input.coverImageUrl.trim()) {
+    throw new Error("Cover image URL is required");
+  }
+  toSlug(input.name);
+
+  await db
+    .update(hackathons)
+    .set({
+      name: input.name.trim(),
+      coverImageUrl: input.coverImageUrl.trim(),
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+    })
+    .where(eq(hackathons.id, hackathon.id));
 }
 
 export async function listProjects(hackathonId: string) {
@@ -163,7 +203,8 @@ export async function listCriteria(hackathonId: string) {
   return db
     .select()
     .from(criteria)
-    .where(eq(criteria.hackathonId, hackathonId));
+    .where(eq(criteria.hackathonId, hackathonId))
+    .orderBy(asc(criteria.sortOrder));
 }
 
 export async function saveRubric(input: {

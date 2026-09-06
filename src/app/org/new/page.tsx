@@ -1,52 +1,51 @@
+import Link from "next/link";
+
+import {
+  ActionForm,
+  Field,
+  FormMessage,
+  SubmitButton,
+} from "@/components/action-form";
 import { createHackathonAction } from "@/server/actions";
 
 export default function NewHackathonPage() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-xl flex-col gap-8 px-6 py-12">
-      <h1 className="text-balance text-2xl">Nueva hackathon</h1>
-      <form action={createHackathonAction} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
-          Nombre
-          <input
-            required
-            name="name"
-            className="border border-line px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Imagen (URL)
-          <input
-            required
-            name="coverImageUrl"
-            type="url"
-            className="border border-line px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Inicio
-          <input
-            required
-            name="startsAt"
-            type="datetime-local"
-            className="border border-line px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Fin
-          <input
-            required
-            name="endsAt"
-            type="datetime-local"
-            className="border border-line px-3 py-2"
-          />
-        </label>
-        <button
-          type="submit"
-          className="w-fit border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
-        >
-          Crear
-        </button>
-      </form>
+    <main className="mx-auto flex max-w-xl flex-col gap-8 px-6 py-12">
+      <div className="flex flex-col gap-2">
+        <Link href="/org" className="text-sm text-muted hover:underline">
+          ← Mis hackathons
+        </Link>
+        <h1 className="text-balance text-2xl">Nueva hackathon</h1>
+      </div>
+      <ActionForm
+        action={createHackathonAction}
+        className="flex flex-col gap-4"
+      >
+        <Field required name="name" label="Nombre" />
+        <Field
+          required
+          name="coverImageUrl"
+          type="url"
+          label="Imagen (URL)"
+          hint="Un link directo a la portada. Si falla, se muestra un bloque vacío."
+        />
+        <Field
+          required
+          name="startsAt"
+          type="datetime-local"
+          label="Inicio"
+          hint="Hora local de tu computadora."
+        />
+        <Field
+          required
+          name="endsAt"
+          type="datetime-local"
+          label="Fin"
+          hint="Las submissions se cierran después de esta fecha."
+        />
+        <FormMessage />
+        <SubmitButton pendingLabel="Creando…">Crear</SubmitButton>
+      </ActionForm>
     </main>
   );
 }

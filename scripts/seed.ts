@@ -1,4 +1,9 @@
-import { addJudge, createHackathon, saveRubric, submitProject } from "../src/server/repo";
+import {
+  addJudge,
+  createHackathon,
+  saveRubric,
+  submitProject,
+} from "../src/server/repo";
 
 const organizerUserId = process.env.ORGANIZER_USER_ID ?? "dev-organizer";
 const now = Date.now();
