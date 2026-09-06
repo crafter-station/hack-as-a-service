@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0c0c0c;
+  --foreground: #ededed;
+  --muted: #a1a1a1;
+  --line: #262626;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+input,
+textarea,
+select {
+  background: #111;
+  color: var(--foreground);
+}

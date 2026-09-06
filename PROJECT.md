@@ -3,7 +3,7 @@
 This file is public. Keep private context and local paths out of it.
 
 **Last updated:** 2026-09-06  
-**Status:** planned  
+**Status:** active  
 **Type:** other
 
 ## Goal
@@ -19,13 +19,16 @@ directory of hackathons is out of scope for v1.
 
 ## Current state
 
-Domain identity is locked as an organizer OS. Glossary started. No product
-code yet.
+v1 is implemented locally: Clerk for organizers, public project submit,
+judge Access Code, weighted ranking. Domain tests pass. Clerk keys are
+not provisioned yet — copy `.env.example` and run `clerk init`.
 
 ## Next action
 
-Finish domain grilling and lock Project, Judge, and Rubric in CONTEXT.md.
+Add Clerk keys, run `bun dev`, and run one hackathon end to end.
 
 ## Links
 
 - Documentation: CONTEXT.md
+- Spec: docs/v1-organizer-os.md
+- GitHub: https://github.com/crafter-station/hack-as-a-service

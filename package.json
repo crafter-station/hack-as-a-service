@@ -1,0 +1,32 @@
+{
+  "name": "hack-as-a-service",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.31.6",
+    "@libsql/client": "^0.15.9",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.44.5",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
