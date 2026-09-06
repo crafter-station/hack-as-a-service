@@ -1,7 +1,9 @@
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
+import { EmptyState } from "@/components/empty-state";
+import { hackathonStatus } from "@/domain";
+import { btnPrimaryClass, statusLabel } from "@/lib/ui";
 import { listOrganizerHackathons } from "@/server/repo";
 
 export default async function OrgHomePage() {
@@ -10,28 +12,33 @@ export default async function OrgHomePage() {
   const hackathons = await listOrganizerHackathons(userId);
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-8 px-6 py-12">
-      <header className="flex items-center justify-between">
+    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+      <header className="flex items-center justify-between gap-4">
         <h1 className="text-balance text-2xl">Tus hackathons</h1>
-        <UserButton />
+        {hackathons.length > 0 ? (
+          <Link href="/org/new" className={btnPrimaryClass}>
+            Crear hackathon
+          </Link>
+        ) : null}
       </header>
-      <Link
-        href="/org/new"
-        className="w-fit border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
-      >
-        Crear hackathon
-      </Link>
       {hackathons.length === 0 ? (
-        <p className="text-muted">Todavía no tienes ninguna.</p>
+        <EmptyState
+          title="Todavía no tienes ninguna. Crea la primera y comparte el link de submit."
+          actionHref="/org/new"
+          actionLabel="Crear hackathon"
+        />
       ) : (
         <ul className="divide-y divide-line border border-line">
           {hackathons.map((hackathon) => (
             <li key={hackathon.id}>
               <Link
                 href={`/org/h/${hackathon.slug}`}
-                className="block px-4 py-3 hover:bg-white/5"
+                className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-white/5"
               >
-                {hackathon.name}
+                <span>{hackathon.name}</span>
+                <span className="font-mono text-xs uppercase text-muted">
+                  {statusLabel[hackathonStatus(hackathon, new Date())]}
+                </span>
               </Link>
             </li>
           ))}

@@ -4,6 +4,7 @@ import {
   assertRubric,
   averageScore,
   canSubmit,
+  DEFAULT_RUBRIC,
   hackathonStatus,
   isValidRating,
   parseParticipantEmails,
@@ -67,6 +68,10 @@ describe("assertRubric", () => {
     expect(() => assertRubric([{ name: "Craft", weightPercent: 60 }])).toThrow(
       /100/,
     );
+  });
+
+  test("the default Rubric is valid", () => {
+    expect(() => assertRubric([...DEFAULT_RUBRIC])).not.toThrow();
   });
 });
 

@@ -21,11 +21,14 @@ directory of hackathons is out of scope for v1.
 
 v1 loop works locally: public Hackathon page, Project submit without
 an account, Judge Access Code, weighted ranking. Organizers sign in at
-`/sign-in` with Clerk (keyless in `bun dev`). Domain tests pass.
+`/sign-in` with Clerk (keyless in `bun dev`). Forms show errors next to
+the action. A new Hackathon starts with a default Rubric. Domain tests
+pass.
 
 ## Next action
 
-Sign in at `/sign-in`, create a Hackathon, and run one event end to end.
+Sign in at `/sign-in`, create a Hackathon, submit a Project, add a Judge,
+and score it.
 
 ## Links
 

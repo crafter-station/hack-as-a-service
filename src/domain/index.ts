@@ -10,6 +10,11 @@ export type CriterionInput = {
   weightPercent: number;
 };
 
+export const DEFAULT_RUBRIC: readonly CriterionInput[] = [
+  { name: "Craft", weightPercent: 50 },
+  { name: "Impact", weightPercent: 50 },
+];
+
 export type RatedCriterion = {
   name: string;
   weightPercent: number;

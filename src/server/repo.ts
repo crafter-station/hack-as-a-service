@@ -1,8 +1,9 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import {
   assertRubric,
   canSubmit,
+  DEFAULT_RUBRIC,
   parseParticipantEmails,
   rankProjects,
   scoreProject,
@@ -18,8 +19,6 @@ import {
   projects,
   ratings,
 } from "./schema";
-
-export type ActionError = { error: string };
 
 async function ready() {
   await ensureSchema();
@@ -74,6 +73,15 @@ export async function createHackathon(input: {
     createdAt: new Date(),
   };
   await db.insert(hackathons).values(row);
+  await db.insert(criteria).values(
+    DEFAULT_RUBRIC.map((item, index) => ({
+      id: id(),
+      hackathonId: row.id,
+      name: item.name,
+      weightPercent: item.weightPercent,
+      sortOrder: index,
+    })),
+  );
   return row;
 }
 
@@ -163,7 +171,8 @@ export async function listCriteria(hackathonId: string) {
   return db
     .select()
     .from(criteria)
-    .where(eq(criteria.hackathonId, hackathonId));
+    .where(eq(criteria.hackathonId, hackathonId))
+    .orderBy(asc(criteria.sortOrder));
 }
 
 export async function saveRubric(input: {
