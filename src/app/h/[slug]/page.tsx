@@ -27,7 +27,15 @@ export default async function PublicHackathonPage({
       <p className="font-mono text-xs uppercase text-muted">{status}</p>
       <h1 className="text-balance text-3xl">{hackathon.name}</h1>
       <p className="text-sm text-muted tabular-nums">
-        {hackathon.startsAt.toISOString()} → {hackathon.endsAt.toISOString()}
+        {hackathon.startsAt.toLocaleString("es-PE", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}{" "}
+        →{" "}
+        {hackathon.endsAt.toLocaleString("es-PE", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
       </p>
       {open ? (
         <Link

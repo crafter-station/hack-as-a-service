@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -16,14 +16,12 @@ export default function HomePage() {
       </p>
       <div className="flex gap-4">
         <SignedOut>
-          <SignInButton>
-            <button
-              type="button"
-              className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
-            >
-              Entrar como organizador
-            </button>
-          </SignInButton>
+          <Link
+            href="/sign-in"
+            className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+          >
+            Entrar como organizador
+          </Link>
         </SignedOut>
         <SignedIn>
           <Link

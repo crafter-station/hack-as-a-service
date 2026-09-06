@@ -19,13 +19,13 @@ directory of hackathons is out of scope for v1.
 
 ## Current state
 
-v1 is implemented locally: Clerk for organizers, public project submit,
-judge Access Code, weighted ranking. Domain tests pass. Clerk keys are
-not provisioned yet — copy `.env.example` and run `clerk init`.
+v1 loop works locally: public Hackathon page, Project submit without
+an account, Judge Access Code, weighted ranking. Organizers sign in at
+`/sign-in` with Clerk (keyless in `bun dev`). Domain tests pass.
 
 ## Next action
 
-Add Clerk keys, run `bun dev`, and run one hackathon end to end.
+Sign in at `/sign-in`, create a Hackathon, and run one event end to end.
 
 ## Links
 
