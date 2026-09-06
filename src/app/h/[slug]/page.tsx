@@ -37,16 +37,24 @@ export default async function PublicHackathonPage({
           timeStyle: "short",
         })}
       </p>
-      {open ? (
+      <div className="flex flex-wrap gap-3">
+        {open ? (
+          <Link
+            href={`/h/${slug}/submit`}
+            className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+          >
+            Subir proyecto
+          </Link>
+        ) : (
+          <p className="text-muted">Las submissions están cerradas.</p>
+        )}
         <Link
-          href={`/h/${slug}/submit`}
-          className="w-fit border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+          href={`/h/${slug}/judge`}
+          className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
         >
-          Subir proyecto
+          Soy juez
         </Link>
-      ) : (
-        <p className="text-muted">Las submissions están cerradas.</p>
-      )}
+      </div>
       <ul className="grid gap-4">
         {projectRows.map((project) => (
           <li key={project.id} className="border border-line p-4">

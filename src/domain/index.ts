@@ -44,7 +44,7 @@ export function hackathonStatus(
 }
 
 export function canSubmit(window: HackathonWindow, now: Date): boolean {
-  return hackathonStatus(window, now) === "open";
+  return now <= window.endsAt;
 }
 
 export function assertRubric(criteria: readonly CriterionInput[]): void {

@@ -22,10 +22,10 @@ describe("canSubmit", () => {
   const startsAt = new Date("2026-09-06T10:00:00Z");
   const endsAt = new Date("2026-09-06T22:00:00Z");
 
-  test("submissions are allowed only between start and end", () => {
+  test("submissions are allowed until the end, including before start", () => {
     expect(
       canSubmit({ startsAt, endsAt }, new Date("2026-09-06T09:59:59Z")),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       canSubmit({ startsAt, endsAt }, new Date("2026-09-06T10:00:00Z")),
     ).toBe(true);

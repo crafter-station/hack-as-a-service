@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { hackathonStatus } from "@/domain";
@@ -49,8 +50,25 @@ export default async function OrganizerHackathonPage({
         <p className="font-mono text-xs uppercase text-muted">{status}</p>
         <h1 className="text-balance text-2xl">{hackathon.name}</h1>
         <p className="text-sm text-muted">
-          Pública: <span className="font-mono">/h/{hackathon.slug}</span>
+          Pública:{" "}
+          <Link href={`/h/${hackathon.slug}`} className="underline">
+            /h/{hackathon.slug}
+          </Link>
         </p>
+        <div className="mt-2 flex flex-wrap gap-3">
+          <Link
+            href={`/h/${slug}/submit`}
+            className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+          >
+            Subir proyecto
+          </Link>
+          <Link
+            href={`/h/${slug}/judge`}
+            className="border border-line px-4 py-2 text-sm hover:bg-white hover:text-black"
+          >
+            Juzgar
+          </Link>
+        </div>
       </header>
 
       <section className="flex flex-col gap-4">
@@ -109,9 +127,12 @@ export default async function OrganizerHackathonPage({
               <p className="font-mono text-xs text-muted">
                 Código: {judge.accessCode}
               </p>
-              <p className="font-mono text-xs text-muted">
-                /h/{slug}/judge?code={judge.accessCode}
-              </p>
+              <Link
+                href={`/h/${slug}/judge?code=${judge.accessCode}`}
+                className="text-xs underline"
+              >
+                Abrir juzgamiento
+              </Link>
             </li>
           ))}
         </ul>
